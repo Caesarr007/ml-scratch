@@ -1,4 +1,4 @@
-# 实现一个线性回归模型
+# 实现一个softmax回归模型
 import torch
 from torch import nn, einsum
 
