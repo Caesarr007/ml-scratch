@@ -48,11 +48,7 @@ class DotProductAttention(nn.Module):
         # value: [batch_size, kv_len, hidden_size]
         d = query.shape[-1]
         score = einsum('bqd,bkd->bqk', query, key) / d ** 0.5
-        scores = torch.bmm(queries, keys.transpose(1,2)) / d ** 0.5
-        print("score", score)
-        print(score.shape)
-        print("scores", scores)
-        print(scores.shape)
+        print("score shape", score.shape)
         self.attention_weights = self.masked_softmax(score, mask)
         print("attention_weights", self.attention_weights)
         return einsum('bqk,bkd->bqd', self.dropout(self.attention_weights), value)
@@ -76,6 +72,8 @@ if __name__ == '__main__':
 
     # 测试缩放点积注意力
     queries, keys = torch.normal(0, 1, (2, 1, 2)), torch.ones((2, 10, 2))
+    print("queries shape", queries.shape)
+    print("keys shape", keys.shape)
     # values的小批量，两个值矩阵是相同的
     values = torch.arange(40, dtype=torch.float32).reshape(1, 10, 4).repeat(
         2, 1, 1)
@@ -83,4 +81,6 @@ if __name__ == '__main__':
     mask = torch.zeros(2, 1, 10).bool()
     attention = DotProductAttention(dropout=0.5)
     attention.eval() 
-    print(attention(queries, keys, values, mask))
+    result = attention(queries, keys, values, mask)
+    print("result shape", result.shape)
+    print(result)
